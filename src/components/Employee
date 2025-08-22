@@ -1,0 +1,96 @@
+import React, { useState } from 'react';
+
+const EmployeeForm = ({ onSubmit, initialData }) => {
+    const [name, setName] = useState(initialData ? initialData.name : '');
+    const [position, setPosition] = useState(initialData ? initialData.position : '');
+    const [email, setEmail] = useState(initialData ? initialData.email : '');
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit({ name, position, email });
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <div>
+                <label>Name:</label>
+                <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                />
+            </div>
+            <div>
+                <label>Position:</label>
+                <input
+                    type="text"
+                    value={position}
+                    onChange={(e) => setPosition(e.target.value)}
+                    required
+                />
+            </div>
+            <div>
+                <label>Email:</label>
+                <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                />
+            </div>
+            <button type="submit">Save Employee</button>
+        </form>
+    );
+};
+
+const EmployeeList = ({ employees, onEdit }) => {
+    return (
+        <ul>
+            {employees.map((employee) => (
+                <li key={employee.id}>
+                    {employee.name} - {employee.position}
+                    <button onClick={() => onEdit(employee)}>Edit</button>
+                </li>
+            ))}
+        </ul>
+    );
+};
+
+const Employee = () => {
+    const [employees, setEmployees] = useState([]);
+    const [editingEmployee, setEditingEmployee] = useState(null);
+
+    const handleAddOrUpdateEmployee = (employeeData) => {
+        if (editingEmployee) {
+            setEmployees((prev) =>
+                prev.map((emp) =>
+                    emp.id === editingEmployee.id ? { ...emp, ...employeeData } : emp
+                )
+            );
+            setEditingEmployee(null);
+        } else {
+            setEmployees((prev) => [
+                ...prev,
+                { id: Date.now(), ...employeeData },
+            ]);
+        }
+    };
+
+    const handleEdit = (employee) => {
+        setEditingEmployee(employee);
+    };
+
+    return (
+        <div>
+            <h1>Employee Management</h1>
+            <EmployeeForm
+                onSubmit={handleAddOrUpdateEmployee}
+                initialData={editingEmployee}
+            />
+            <EmployeeList employees={employees} onEdit={handleEdit} />
+        </div>
+    );
+};
+
+export default Employee;

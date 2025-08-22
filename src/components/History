@@ -1,0 +1,43 @@
+import React, { useEffect, useState } from 'react';
+import { fetchEmployeeHistory } from '../../services/employeeService';
+
+const History = () => {
+    const [history, setHistory] = useState([]);
+
+    useEffect(() => {
+        const getHistory = async () => {
+            const data = await fetchEmployeeHistory();
+            setHistory(data);
+        };
+
+        getHistory();
+    }, []);
+
+    return (
+        <div>
+            <h1>Employee Location History</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th>Project</th>
+                        <th>Location</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {history.map((record, index) => (
+                        <tr key={index}>
+                            <td>{record.employeeName}</td>
+                            <td>{record.project}</td>
+                            <td>{record.location}</td>
+                            <td>{record.date}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+};
+
+export default History;

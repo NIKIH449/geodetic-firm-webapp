@@ -1,0 +1,41 @@
+import React, { useEffect, useState } from 'react';
+import { getStatistics } from '../../services/statisticsService';
+
+const Statistics = () => {
+    const [statistics, setStatistics] = useState([]);
+
+    useEffect(() => {
+        const fetchStatistics = async () => {
+            const data = await getStatistics();
+            setStatistics(data);
+        };
+
+        fetchStatistics();
+    }, []);
+
+    return (
+        <div>
+            <h1>Employee Visit Statistics</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Project</th>
+                        <th>Visits</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {statistics.map((stat, index) => (
+                        <tr key={index}>
+                            <td>{stat.employeeName}</td>
+                            <td>{stat.projectName}</td>
+                            <td>{stat.visitCount}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+};
+
+export default Statistics;

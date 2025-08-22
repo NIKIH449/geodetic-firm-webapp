@@ -1,0 +1,86 @@
+import React, { useState } from 'react';
+
+const ProjectForm = ({ onSubmit, initialData }) => {
+    const [projectName, setProjectName] = useState(initialData?.name || '');
+    const [location, setLocation] = useState(initialData?.location || '');
+    const [description, setDescription] = useState(initialData?.description || '');
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit({ name: projectName, location, description });
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <div>
+                <label>Project Name:</label>
+                <input 
+                    type="text" 
+                    value={projectName} 
+                    onChange={(e) => setProjectName(e.target.value)} 
+                    required 
+                />
+            </div>
+            <div>
+                <label>Location:</label>
+                <input 
+                    type="text" 
+                    value={location} 
+                    onChange={(e) => setLocation(e.target.value)} 
+                    required 
+                />
+            </div>
+            <div>
+                <label>Description:</label>
+                <textarea 
+                    value={description} 
+                    onChange={(e) => setDescription(e.target.value)} 
+                />
+            </div>
+            <button type="submit">Save Project</button>
+        </form>
+    );
+};
+
+const ProjectList = ({ projects, onEdit }) => {
+    return (
+        <ul>
+            {projects.map((project) => (
+                <li key={project.id}>
+                    {project.name} - {project.location}
+                    <button onClick={() => onEdit(project)}>Edit</button>
+                </li>
+            ))}
+        </ul>
+    );
+};
+
+const Project = () => {
+    const [projects, setProjects] = useState([]);
+    const [editingProject, setEditingProject] = useState(null);
+
+    const handleAddOrUpdateProject = (project) => {
+        if (editingProject) {
+            setProjects((prev) => 
+                prev.map((p) => (p.id === editingProject.id ? { ...p, ...project } : p))
+            );
+        } else {
+            setProjects((prev) => [...prev, { id: Date.now(), ...project }]);
+        }
+        setEditingProject(null);
+    };
+
+    const handleEditProject = (project) => {
+        setEditingProject(project);
+    };
+
+    return (
+        <div>
+            <h1>Project Management</h1>
+            <ProjectForm onSubmit={handleAddOrUpdateProject} initialData={editingProject} />
+            <ProjectList projects={projects} onEdit={handleEditProject} />
+        </div>
+    );
+};
+
+export default Project;
